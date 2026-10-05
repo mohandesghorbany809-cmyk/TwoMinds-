@@ -1,0 +1,1125 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>NEON VPN</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#02050b;
+  color:#fff;
+}
+
+body{
+  position:relative;
+}
+
+/* BACKGROUND */
+
+.bg{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 25%,rgba(0,125,255,.16),transparent 35%),
+    radial-gradient(circle at 15% 85%,rgba(0,255,200,.07),transparent 30%),
+    linear-gradient(145deg,#02050b,#06101c 55%,#02050a);
+}
+
+.glow{
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:.25;
+  background:#008cff;
+  top:12%;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.grid{
+  position:absolute;
+  inset:0;
+  opacity:.08;
+  background-image:
+    linear-gradient(rgba(80,180,255,.35) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(80,180,255,.35) 1px,transparent 1px);
+  background-size:42px 42px;
+  transform:perspective(400px) rotateX(55deg) scale(1.7);
+  transform-origin:center bottom;
+}
+
+/* APP */
+
+.app{
+  position:relative;
+  z-index:2;
+  width:100%;
+  height:100%;
+  overflow-y:auto;
+  padding:18px 16px 35px;
+}
+
+.content{
+  width:100%;
+  max-width:520px;
+  margin:auto;
+}
+
+/* TOP */
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.brandIcon{
+  width:40px;
+  height:40px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(145deg,#0d9cff,#0048a9);
+  box-shadow:
+    0 0 25px rgba(0,145,255,.4),
+    inset 0 1px 1px rgba(255,255,255,.35);
+  font-size:20px;
+}
+
+.brandText b{
+  display:block;
+  font-size:14px;
+  letter-spacing:1px;
+}
+
+.brandText span{
+  display:block;
+  margin-top:3px;
+  color:#6f8498;
+  font-size:8px;
+  letter-spacing:2px;
+}
+
+.statusPill{
+  padding:8px 11px;
+  border-radius:20px;
+  border:1px solid rgba(80,180,255,.18);
+  background:rgba(7,20,35,.65);
+  color:#6f91ac;
+  font-size:9px;
+  backdrop-filter:blur(15px);
+}
+
+.statusPill.online{
+  color:#27e7ad;
+  border-color:rgba(39,231,173,.25);
+}
+
+/* SERVER CARD */
+
+.server{
+  margin-top:22px;
+  padding:15px;
+  border-radius:22px;
+  border:1px solid rgba(90,170,255,.14);
+  background:
+    linear-gradient(145deg,rgba(13,31,51,.86),rgba(4,13,24,.75));
+  box-shadow:
+    0 15px 50px rgba(0,0,0,.3),
+    inset 0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:blur(18px);
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.flag{
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+  background:
+    radial-gradient(circle at 30% 25%,#54c5ff,#0757a8 70%);
+  box-shadow:
+    0 0 22px rgba(0,145,255,.25),
+    inset 0 1px 1px rgba(255,255,255,.25);
+}
+
+.serverInfo{
+  flex:1;
+}
+
+.serverInfo b{
+  display:block;
+  font-size:13px;
+}
+
+.serverInfo span{
+  display:block;
+  color:#71879a;
+  margin-top:5px;
+  font-size:9px;
+}
+
+.serverLoad{
+  text-align:left;
+  direction:ltr;
+}
+
+.serverLoad small{
+  color:#62798f;
+  font-size:8px;
+}
+
+.loadBar{
+  width:55px;
+  height:4px;
+  background:#172839;
+  border-radius:10px;
+  margin-top:6px;
+  overflow:hidden;
+}
+
+.loadBar i{
+  display:block;
+  height:100%;
+  width:37%;
+  background:#1caeff;
+  border-radius:10px;
+  box-shadow:0 0 8px #1caeff;
+}
+
+/* MAIN ORB */
+
+.orbArea{
+  height:310px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+.orb{
+  width:215px;
+  height:215px;
+  border-radius:50%;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ring{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:1px solid rgba(0,155,255,.25);
+}
+
+.ring.r1{
+  inset:-12px;
+  border-top-color:#079cff;
+  border-right-color:#079cff;
+  animation:rotate 5s linear infinite;
+}
+
+.ring.r2{
+  inset:-25px;
+  border-bottom-color:rgba(0,205,255,.45);
+  border-left-color:rgba(0,205,255,.2);
+  animation:rotateReverse 8s linear infinite;
+}
+
+.ring.r3{
+  inset:-39px;
+  border:1px dashed rgba(60,155,255,.12);
+  animation:rotate 18s linear infinite;
+}
+
+@keyframes rotate{
+  to{transform:rotate(360deg)}
+}
+
+@keyframes rotateReverse{
+  to{transform:rotate(-360deg)}
+}
+
+.core{
+  width:185px;
+  height:185px;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 35% 25%,#102e48,#06111e 65%,#030810);
+  border:1px solid rgba(90,190,255,.25);
+  box-shadow:
+    0 0 50px rgba(0,125,255,.16),
+    inset 0 0 40px rgba(0,130,255,.07);
+}
+
+.lock{
+  width:50px;
+  height:50px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,100,170,.16);
+  border:1px solid rgba(50,170,255,.2);
+  font-size:23px;
+  box-shadow:0 0 25px rgba(0,150,255,.13);
+}
+
+.mainStatus{
+  margin-top:13px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.subStatus{
+  margin-top:6px;
+  font-size:9px;
+  color:#698197;
+}
+
+/* CONNECTED */
+
+.connected .ring.r1{
+  border-color:#10d6a0;
+  border-left-color:transparent;
+  border-bottom-color:transparent;
+}
+
+.connected .ring.r2{
+  border-color:rgba(30,240,180,.35);
+}
+
+.connected .core{
+  box-shadow:
+    0 0 65px rgba(0,220,160,.17),
+    inset 0 0 45px rgba(0,220,160,.06);
+}
+
+.connected .lock{
+  background:rgba(0,200,145,.12);
+  border-color:rgba(0,230,170,.3);
+}
+
+.connected .statusPill{
+  color:#27e7ad;
+}
+
+/* CONNECT BUTTON */
+
+.connect{
+  width:100%;
+  height:58px;
+  border:0;
+  border-radius:19px;
+  color:#fff;
+  font-family:inherit;
+  font-weight:bold;
+  font-size:15px;
+  background:
+    linear-gradient(135deg,#087ff3,#05b7ff);
+  box-shadow:
+    0 12px 35px rgba(0,130,255,.25),
+    inset 0 1px 0 rgba(255,255,255,.25);
+  position:relative;
+  overflow:hidden;
+}
+
+.connect:before{
+  content:"";
+  position:absolute;
+  width:80px;
+  height:180px;
+  top:-60px;
+  left:-100px;
+  transform:rotate(25deg);
+  background:rgba(255,255,255,.16);
+  animation:shine 3s infinite;
+}
+
+@keyframes shine{
+  0%{left:-100px}
+  45%,100%{left:120%}
+}
+
+.connect:active{
+  transform:scale(.98);
+}
+
+.connected .connect{
+  background:linear-gradient(135deg,#087f65,#08b98b);
+  box-shadow:0 12px 35px rgba(0,210,150,.17);
+}
+
+/* STATS */
+
+.stats{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+
+.stat{
+  min-height:78px;
+  padding:12px 8px;
+  text-align:center;
+  border-radius:17px;
+  background:rgba(7,20,34,.7);
+  border:1px solid rgba(90,160,220,.1);
+  box-shadow:inset 0 1px rgba(255,255,255,.025);
+  backdrop-filter:blur(12px);
+}
+
+.statIcon{
+  font-size:15px;
+  opacity:.8;
+}
+
+.stat small{
+  display:block;
+  color:#61788e;
+  font-size:8px;
+  margin-top:7px;
+}
+
+.stat b{
+  display:block;
+  font-size:12px;
+  margin-top:5px;
+  direction:ltr;
+}
+
+/* PING EASTER EGG */
+
+#pingCard{
+  cursor:pointer;
+  user-select:none;
+}
+
+#pingCard:active{
+  transform:scale(.97);
+}
+
+.pingDot{
+  display:inline-block;
+  width:5px;
+  height:5px;
+  margin-left:4px;
+  border-radius:50%;
+  background:#20e6ae;
+  box-shadow:0 0 8px #20e6ae;
+}
+
+/* BOTTOM INFO */
+
+.security{
+  margin-top:16px;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid rgba(90,160,220,.09);
+  background:rgba(5,15,26,.6);
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.securityIcon{
+  width:35px;
+  height:35px;
+  border-radius:11px;
+  background:rgba(0,150,255,.1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.securityText{
+  flex:1;
+}
+
+.securityText b{
+  font-size:10px;
+}
+
+.securityText span{
+  display:block;
+  margin-top:4px;
+  color:#60778d;
+  font-size:8px;
+}
+
+/* HIDDEN FILE */
+
+#videoFile{
+  display:none;
+}
+
+/* VIDEO */
+
+#videoScreen{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:#000;
+  display:none;
+}
+
+#video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
+}
+
+.videoTop{
+  position:absolute;
+  top:17px;
+  right:17px;
+  left:17px;
+  display:flex;
+  justify-content:space-between;
+  z-index:105;
+  pointer-events:none;
+}
+
+.videoBadge{
+  padding:8px 11px;
+  border-radius:12px;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(10px);
+  font-size:9px;
+}
+
+.videoSecure{
+  color:#24e5ad;
+}
+
+.videoBottom{
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.6);
+  border:1px solid rgba(255,255,255,.08);
+  padding:9px 15px;
+  border-radius:20px;
+  font-size:8px;
+  color:#aaa;
+  white-space:nowrap;
+}
+
+/* ADMIN POPUP */
+
+#admin{
+  position:fixed;
+  inset:0;
+  z-index:80;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(12px);
+}
+
+.adminBox{
+  width:100%;
+  max-width:390px;
+  padding:22px;
+  border-radius:25px;
+  background:
+    linear-gradient(145deg,#102438,#07121e);
+  border:1px solid rgba(80,180,255,.2);
+  box-shadow:0 25px 80px rgba(0,0,0,.6);
+}
+
+.adminBox h2{
+  margin:0;
+  font-size:16px;
+}
+
+.adminBox p{
+  color:#71879b;
+  font-size:9px;
+  line-height:2;
+}
+
+.choose{
+  display:block;
+  width:100%;
+  padding:14px;
+  border-radius:15px;
+  text-align:center;
+  background:#087ff3;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.close{
+  width:100%;
+  margin-top:10px;
+  padding:13px;
+  border:0;
+  border-radius:15px;
+  background:#172536;
+  color:#9aafc2;
+  font-family:inherit;
+}
+
+/* CONNECTING */
+
+.connecting .orb .ring.r1{
+  animation:rotate .8s linear infinite;
+}
+
+.connecting .mainStatus{
+  animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+  50%{opacity:.45}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+  <div class="glow"></div>
+  <div class="grid"></div>
+</div>
+
+<div class="app" id="app">
+<div class="content">
+
+  <div class="top">
+
+    <div class="brand">
+      <div class="brandIcon">🛡️</div>
+      <div class="brandText">
+        <b>NEON VPN</b>
+        <span>SECURE NETWORK</span>
+      </div>
+    </div>
+
+    <div class="statusPill" id="topStatus">
+      ● OFFLINE
+    </div>
+
+  </div>
+
+
+  <div class="server">
+
+    <div class="flag">🌐</div>
+
+    <div class="serverInfo">
+      <b>Quantum Node</b>
+      <span>Ultra Secure • Auto Select</span>
+    </div>
+
+    <div class="serverLoad">
+      <small>LOAD 37%</small>
+      <div class="loadBar">
+        <i></i>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="orbArea">
+
+    <div class="orb">
+
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+
+      <div class="core">
+
+        <div class="lock" id="lock">
+          🔒
+        </div>
+
+        <div class="mainStatus" id="mainStatus">
+          Disconnected
+        </div>
+
+        <div class="subStatus" id="subStatus">
+          Secure connection ready
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <button class="connect" id="connectBtn">
+    CONNECT
+  </button>
+
+
+  <div class="stats">
+
+    <div class="stat">
+      <div class="statIcon">⚡</div>
+      <small>DOWNLOAD</small>
+      <b id="download">-- Mbps</b>
+    </div>
+
+    <div class="stat" id="pingCard">
+      <div class="statIcon">📡</div>
+      <small>PING</small>
+      <b id="ping">-- ms <span class="pingDot"></span></b>
+    </div>
+
+    <div class="stat">
+      <div class="statIcon">⏱</div>
+      <small>SESSION</small>
+      <b id="session">00:00</b>
+    </div>
+
+  </div>
+
+
+  <div class="security">
+
+    <div class="securityIcon">🔐</div>
+
+    <div class="securityText">
+      <b>Secure Tunnel</b>
+      <span>Protected demo connection • AES simulation</span>
+    </div>
+
+    <div style="color:#22dca6;font-size:12px">✓</div>
+
+  </div>
+
+</div>
+</div>
+
+
+<!-- ADMIN / EASTER EGG -->
+
+<div id="admin">
+
+  <div class="adminBox">
+
+    <h2>Media Control</h2>
+
+    <p>
+      Select the local video that will be displayed
+      after the demo connection becomes active.
+    </p>
+
+    <label class="choose">
+      SELECT VIDEO
+      <input id="videoFile" type="file" accept="video/*">
+    </label>
+
+    <button class="close" id="closeAdmin">
+      CLOSE
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- VIDEO -->
+
+<div id="videoScreen">
+
+  <div class="videoTop">
+
+    <div class="videoBadge">
+      NEON VPN
+    </div>
+
+    <div class="videoBadge videoSecure">
+      ● SECURE STREAM
+    </div>
+
+  </div>
+
+  <video
+    id="video"
+    playsinline
+    preload="auto"
+    controlslist="nodownload nofullscreen noremoteplayback noplaybackrate"
+    disablepictureinpicture
+    oncontextmenu="return false">
+  </video>
+
+  <div class="videoBottom">
+    ENCRYPTED STREAM • PLAYING
+  </div>
+
+</div>
+
+
+<script>
+
+const app = document.getElementById("app");
+const connectBtn = document.getElementById("connectBtn");
+const mainStatus = document.getElementById("mainStatus");
+const subStatus = document.getElementById("subStatus");
+const topStatus = document.getElementById("topStatus");
+const lock = document.getElementById("lock");
+
+const ping = document.getElementById("ping");
+const download = document.getElementById("download");
+const session = document.getElementById("session");
+
+const pingCard = document.getElementById("pingCard");
+
+const admin = document.getElementById("admin");
+const videoFile = document.getElementById("videoFile");
+const closeAdmin = document.getElementById("closeAdmin");
+
+const videoScreen = document.getElementById("videoScreen");
+const video = document.getElementById("video");
+
+let videoURL = null;
+let connected = false;
+let seconds = 0;
+let sessionTimer = null;
+
+
+/* -------------------------
+   VIDEO SELECTION
+------------------------- */
+
+videoFile.addEventListener("change",function(){
+
+  if(!this.files || !this.files[0]) return;
+
+  if(videoURL){
+    URL.revokeObjectURL(videoURL);
+  }
+
+  videoURL = URL.createObjectURL(this.files[0]);
+
+  video.src = videoURL;
+
+  admin.style.display = "none";
+
+});
+
+
+/* -------------------------
+   PING EASTER EGG
+   5 FAST TAPS
+------------------------- */
+
+let taps = 0;
+let lastTap = 0;
+
+pingCard.addEventListener("click",function(){
+
+  const now = Date.now();
+
+  if(now - lastTap > 1200){
+    taps = 0;
+  }
+
+  taps++;
+  lastTap = now;
+
+  if(taps >= 5){
+
+    taps = 0;
+
+    admin.style.display = "flex";
+
+  }
+
+});
+
+
+closeAdmin.addEventListener("click",function(){
+
+  admin.style.display = "none";
+
+});
+
+
+/* -------------------------
+   CONNECT
+------------------------- */
+
+connectBtn.addEventListener("click",function(){
+
+  if(connected){
+
+    disconnect();
+
+  }else{
+
+    connect();
+
+  }
+
+});
+
+
+function connect(){
+
+  connectBtn.disabled = true;
+
+  app.classList.add("connecting");
+
+  mainStatus.textContent = "Connecting...";
+  subStatus.textContent = "Establishing secure tunnel";
+  topStatus.textContent = "● CONNECTING";
+  topStatus.classList.remove("online");
+
+  lock.textContent = "↻";
+
+  let step = 0;
+
+  const timer = setInterval(function(){
+
+    step++;
+
+    if(step === 1){
+      subStatus.textContent = "Locating optimal node...";
+    }
+
+    if(step === 2){
+      subStatus.textContent = "Negotiating secure channel...";
+    }
+
+    if(step === 3){
+      subStatus.textContent = "Encrypting session...";
+    }
+
+    if(step === 4){
+
+      clearInterval(timer);
+
+      connected = true;
+
+      app.classList.remove("connecting");
+      app.classList.add("connected");
+
+      mainStatus.textContent = "Connected";
+      subStatus.textContent = "Secure demo tunnel active";
+
+      topStatus.textContent = "● ONLINE";
+      topStatus.classList.add("online");
+
+      lock.textContent = "🔒";
+
+      ping.innerHTML =
+        (28 + Math.floor(Math.random()*25)) +
+        " ms <span class='pingDot'></span>";
+
+      download.textContent =
+        (42 + Math.floor(Math.random()*50)) +
+        " Mbps";
+
+      connectBtn.textContent = "DISCONNECT";
+      connectBtn.disabled = false;
+
+      startSession();
+
+      if(video.src){
+
+        setTimeout(function(){
+          openVideo();
+        },900);
+
+      }
+
+    }
+
+  },650);
+
+}
+
+
+/* -------------------------
+   SESSION TIMER
+------------------------- */
+
+function startSession(){
+
+  seconds = 0;
+
+  clearInterval(sessionTimer);
+
+  sessionTimer = setInterval(function(){
+
+    seconds++;
+
+    const m =
+      String(Math.floor(seconds/60)).padStart(2,"0");
+
+    const s =
+      String(seconds%60).padStart(2,"0");
+
+    session.textContent = m + ":" + s;
+
+  },1000);
+
+}
+
+
+/* -------------------------
+   VIDEO
+------------------------- */
+
+function openVideo(){
+
+  videoScreen.style.display = "block";
+
+  video.currentTime = 0;
+
+  const p = video.play();
+
+  if(p){
+    p.catch(function(){});
+  }
+
+}
+
+
+/* -------------------------
+   DISCONNECT
+------------------------- */
+
+function disconnect(){
+
+  connected = false;
+
+  clearInterval(sessionTimer);
+
+  video.pause();
+  video.currentTime = 0;
+
+  videoScreen.style.display = "none";
+
+  app.classList.remove("connected");
+  app.classList.remove("connecting");
+
+  mainStatus.textContent = "Disconnected";
+  subStatus.textContent = "Secure connection ready";
+
+  topStatus.textContent = "● OFFLINE";
+  topStatus.classList.remove("online");
+
+  lock.textContent = "🔒";
+
+  ping.innerHTML =
+    "-- ms <span class='pingDot'></span>";
+
+  download.textContent = "-- Mbps";
+  session.textContent = "00:00";
+
+  connectBtn.textContent = "CONNECT";
+
+}
+
+
+/* -------------------------
+   EXTRA VIDEO LOCKS
+------------------------- */
+
+document.addEventListener("keydown",function(e){
+
+  if(videoScreen.style.display === "block"){
+
+    if(
+      e.code === "Space" ||
+      e.code === "ArrowLeft" ||
+      e.code === "ArrowRight" ||
+      e.code === "ArrowUp" ||
+      e.code === "ArrowDown"
+    ){
+      e.preventDefault();
+    }
+
+  }
+
+});
+
+
+video.addEventListener("contextmenu",function(e){
+  e.preventDefault();
+});
+
+
+/*
+   اگر ویدیو تمام شد،
+   دوباره از اول پخش شود.
+*/
+
+video.addEventListener("ended",function(){
+
+  video.currentTime = 0;
+
+  video.play().catch(function(){});
+
+});
+
+
+/*
+   جلوگیری از تغییر زمان پخش
+   از طریق کنترل‌های معمول.
+*/
+
+video.addEventListener("seeking",function(){
+
+  if(videoScreen.style.display === "block"){
+
+    if(Math.abs(video.currentTime) > 0.5){
+
+      video.currentTime = 0;
+
+    }
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
